@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="GitHubApp" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <searchBar contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="21I-zs-T6J">
+                                <rect key="frame" x="0.0" y="44" width="414" height="51"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </searchBar>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="ObO-0l-Eeu">
+                                <rect key="frame" x="0.0" y="95" width="414" height="717"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </tableView>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="Lij-hO-RWH">
+                                <rect key="frame" x="0.0" y="831" width="414" height="32"/>
+                                <segments>
+                                    <segment title="Default"/>
+                                    <segment title="Starts"/>
+                                    <segment title="Forks"/>
+                                    <segment title="Updated"/>
+                                </segments>
+                                <connections>
+                                    <action selector="segmentedControlDidChange:" destination="BYZ-38-t0r" eventType="valueChanged" id="BmN-59-rjA"/>
+                                </connections>
+                            </segmentedControl>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <color key="backgroundColor" red="0.85553246736526489" green="0.77646041468622662" blue="0.81408454621414816" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                        <constraints>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="Lij-hO-RWH" secondAttribute="bottom" id="4AP-fT-594"/>
+                            <constraint firstItem="Lij-hO-RWH" firstAttribute="top" secondItem="ObO-0l-Eeu" secondAttribute="bottom" constant="19" id="6UC-4S-TrV"/>
+                            <constraint firstItem="Lij-hO-RWH" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="9la-aE-h4M"/>
+                            <constraint firstItem="21I-zs-T6J" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="FRK-Kz-K6o"/>
+                            <constraint firstItem="21I-zs-T6J" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="GAz-0g-Nnp"/>
+                            <constraint firstItem="ObO-0l-Eeu" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="SXa-Ka-1fJ"/>
+                            <constraint firstItem="ObO-0l-Eeu" firstAttribute="top" secondItem="21I-zs-T6J" secondAttribute="bottom" id="Upb-KR-m2K"/>
+                            <constraint firstItem="21I-zs-T6J" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="ZrF-Oh-avO"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="ObO-0l-Eeu" secondAttribute="trailing" id="hmT-sR-cAz"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="Lij-hO-RWH" secondAttribute="trailing" id="qSO-jZ-YyY"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="searchBar" destination="21I-zs-T6J" id="6la-0e-PvJ"/>
+                        <outlet property="segmentedControl" destination="Lij-hO-RWH" id="xUe-0M-lWY"/>
+                        <outlet property="tableView" destination="ObO-0l-Eeu" id="F35-yx-80G"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="117" y="66"/>
+        </scene>
+    </scenes>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

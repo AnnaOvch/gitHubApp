@@ -1,19 +1,17 @@
 //
-//  ViewController.swift
+//  UserDetailViewController.swift
 //  GitHubApp
 //
-//  Created by Анна on 06.01.2022.
+//  Created by Анна on 07.01.2022.
 //
 
 import UIKit
 
-class ViewController: UIViewController {
+class UserDetailViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
         // Do any additional setup after loading the view.
     }
-
-
 }
-
