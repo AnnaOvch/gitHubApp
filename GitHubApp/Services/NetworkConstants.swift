@@ -8,15 +8,13 @@
 import Foundation
 
 struct NetworkConstants {
-    static let baseUrl = "https://api.github.com/search/"
+    static let baseUrl = "https://api.github.com/"
     
     enum HttpHeaderField: String {
         case acceptType = "accept"
-        case userAgent = "User-Agent"
     }
 
     enum ContentType: String {
         case jsonGitHub = "application/vnd.github.v3+json"
-        case request = "request"
     }
 }

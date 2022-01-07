@@ -7,6 +7,10 @@
 
 import UIKit
 
+protocol RepositoryTableViewCellDelegate: AnyObject {
+    func didTapAvatarImage(for indexPath: IndexPath)
+}
+
 class RepositoryTableViewCell: UITableViewCell {
     @IBOutlet weak var authorImageView: UIImageView!
     @IBOutlet weak var repoNameLabel: UILabel!
@@ -15,14 +19,14 @@ class RepositoryTableViewCell: UITableViewCell {
     @IBOutlet weak var forksLabel: UILabel!
     @IBOutlet weak var issuesLabel: UILabel!
     
+    weak var delegate: RepositoryTableViewCellDelegate?
+    
     override func awakeFromNib() {
         super.awakeFromNib()
-        authorImageView.layer.cornerRadius = authorImageView.bounds.height / Constants.cornerRadiusDivider
-        authorImageView.layer.masksToBounds = true
+        initialSetUp()
     }
-
+    
     func configure(_ model: RepoModel) {
-        //let t = Constants.repoName.append(NSAttributedString(string: model.name))
         repoNameLabel.text = Constants.repoName + model.name
         authorImageView.image =  model.avatarImage
         authorNameLabel.text = Constants.authorName + model.owner.login
@@ -39,6 +43,22 @@ class RepositoryTableViewCell: UITableViewCell {
         watchersLabel.text = ""
         forksLabel.text = ""
         issuesLabel.text = ""
+    }
+}
+
+private extension RepositoryTableViewCell {
+    func initialSetUp() {
+        selectionStyle = .none
+        authorImageView.layer.cornerRadius = authorImageView.bounds.height / Constants.cornerRadiusDivider
+        authorImageView.layer.masksToBounds = true
+        authorImageView.isUserInteractionEnabled = true
+        let authorImageViewTapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapAuthorImageView))
+        authorImageView.addGestureRecognizer(authorImageViewTapGesture)
+    }
+    
+    @objc func didTapAuthorImageView() {
+        guard let indexPath = self.getIndexPath() else { fatalError() }
+        delegate?.didTapAvatarImage(for: indexPath)
     }
 }
 

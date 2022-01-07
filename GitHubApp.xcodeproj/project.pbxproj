@@ -26,8 +26,13 @@
 		95237B39278755F000A824AE /* UITableViewCell+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95237B38278755F000A824AE /* UITableViewCell+Extension.swift */; };
 		95237B3C27879CF400A824AE /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95237B3B27879CF300A824AE /* MainViewModel.swift */; };
 		95237B3E27885CD600A824AE /* UIActivityIndicator+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95237B3D27885CD600A824AE /* UIActivityIndicator+Extension.swift */; };
-		95237B4227889ECA00A824AE /* UserDetail.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 95237B4127889ECA00A824AE /* UserDetail.storyboard */; };
 		95237B4427889EDE00A824AE /* UserDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95237B4327889EDE00A824AE /* UserDetailViewController.swift */; };
+		95237B462788DC7500A824AE /* UserDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95237B452788DC7500A824AE /* UserDetailViewModel.swift */; };
+		95237B482788E74C00A824AE /* UIViewController+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95237B472788E74C00A824AE /* UIViewController+Extension.swift */; };
+		95237B4A2789146500A824AE /* RepositoryDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95237B492789146500A824AE /* RepositoryDetailViewController.swift */; };
+		95237B4C2789147200A824AE /* RepositoryDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95237B4B2789147200A824AE /* RepositoryDetailViewModel.swift */; };
+		95237B4E2789E44200A824AE /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95237B4D2789E44200A824AE /* String+Extension.swift */; };
+		95237B502789E74000A824AE /* UIStackView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95237B4F2789E74000A824AE /* UIStackView+Extension.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -53,8 +58,13 @@
 		95237B38278755F000A824AE /* UITableViewCell+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableViewCell+Extension.swift"; sourceTree = "<group>"; };
 		95237B3B27879CF300A824AE /* MainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
 		95237B3D27885CD600A824AE /* UIActivityIndicator+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIActivityIndicator+Extension.swift"; sourceTree = "<group>"; };
-		95237B4127889ECA00A824AE /* UserDetail.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = UserDetail.storyboard; sourceTree = "<group>"; };
 		95237B4327889EDE00A824AE /* UserDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetailViewController.swift; sourceTree = "<group>"; };
+		95237B452788DC7500A824AE /* UserDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetailViewModel.swift; sourceTree = "<group>"; };
+		95237B472788E74C00A824AE /* UIViewController+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extension.swift"; sourceTree = "<group>"; };
+		95237B492789146500A824AE /* RepositoryDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryDetailViewController.swift; sourceTree = "<group>"; };
+		95237B4B2789147200A824AE /* RepositoryDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryDetailViewModel.swift; sourceTree = "<group>"; };
+		95237B4D2789E44200A824AE /* String+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
+		95237B4F2789E74000A824AE /* UIStackView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIStackView+Extension.swift"; sourceTree = "<group>"; };
 		9EBCCADE9EE7FBADA827838F /* Pods-GitHubApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GitHubApp.release.xcconfig"; path = "Target Support Files/Pods-GitHubApp/Pods-GitHubApp.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -152,6 +162,9 @@
 				95237B36278755C800A824AE /* UITableView+Extension.swift */,
 				95237B38278755F000A824AE /* UITableViewCell+Extension.swift */,
 				95237B3D27885CD600A824AE /* UIActivityIndicator+Extension.swift */,
+				95237B472788E74C00A824AE /* UIViewController+Extension.swift */,
+				95237B4D2789E44200A824AE /* String+Extension.swift */,
+				95237B4F2789E74000A824AE /* UIStackView+Extension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -168,6 +181,8 @@
 		95237B3F27889E9900A824AE /* RepositoryDetail */ = {
 			isa = PBXGroup;
 			children = (
+				95237B492789146500A824AE /* RepositoryDetailViewController.swift */,
+				95237B4B2789147200A824AE /* RepositoryDetailViewModel.swift */,
 			);
 			path = RepositoryDetail;
 			sourceTree = "<group>";
@@ -175,8 +190,8 @@
 		95237B4027889EB100A824AE /* UserDetail */ = {
 			isa = PBXGroup;
 			children = (
-				95237B4127889ECA00A824AE /* UserDetail.storyboard */,
 				95237B4327889EDE00A824AE /* UserDetailViewController.swift */,
+				95237B452788DC7500A824AE /* UserDetailViewModel.swift */,
 			);
 			path = UserDetail;
 			sourceTree = "<group>";
@@ -250,7 +265,6 @@
 			files = (
 				95237B1127870E0900A824AE /* LaunchScreen.storyboard in Resources */,
 				95237B0E27870E0900A824AE /* Assets.xcassets in Resources */,
-				95237B4227889ECA00A824AE /* UserDetail.storyboard in Resources */,
 				95237B0C27870E0800A824AE /* Main.storyboard in Resources */,
 				95237B322787513D00A824AE /* RepositoryTableViewCell.xib in Resources */,
 			);
@@ -309,15 +323,21 @@
 				95237B312787513D00A824AE /* RepositoryTableViewCell.swift in Sources */,
 				95237B3E27885CD600A824AE /* UIActivityIndicator+Extension.swift in Sources */,
 				95237B342787541600A824AE /* RepoOwner.swift in Sources */,
+				95237B482788E74C00A824AE /* UIViewController+Extension.swift in Sources */,
 				95237B21278730F800A824AE /* NetworkConstants.swift in Sources */,
 				95237B2827873CD400A824AE /* RepoModel.swift in Sources */,
 				95237B3C27879CF400A824AE /* MainViewModel.swift in Sources */,
+				95237B502789E74000A824AE /* UIStackView+Extension.swift in Sources */,
+				95237B4E2789E44200A824AE /* String+Extension.swift in Sources */,
 				95237B0927870E0800A824AE /* ViewController.swift in Sources */,
 				95237B2A27873CFB00A824AE /* RepositoriesModel.swift in Sources */,
+				95237B462788DC7500A824AE /* UserDetailViewModel.swift in Sources */,
 				95237B39278755F000A824AE /* UITableViewCell+Extension.swift in Sources */,
 				95237B232787318E00A824AE /* ApiRouter.swift in Sources */,
+				95237B4A2789146500A824AE /* RepositoryDetailViewController.swift in Sources */,
 				95237B4427889EDE00A824AE /* UserDetailViewController.swift in Sources */,
 				95237B0527870E0800A824AE /* AppDelegate.swift in Sources */,
+				95237B4C2789147200A824AE /* RepositoryDetailViewModel.swift in Sources */,
 				95237B0727870E0800A824AE /* SceneDelegate.swift in Sources */,
 				95237B2527873A6100A824AE /* ApiClient.swift in Sources */,
 			);

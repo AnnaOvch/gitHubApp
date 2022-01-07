@@ -7,11 +7,159 @@
 
 import UIKit
 
+extension UserDetailViewController {
+    static func make(for username: String) -> UserDetailViewController {
+        let userDetailViewController = UserDetailViewController()
+        userDetailViewController.viewModel = UserDetailViewModel(username: username, networkService: ApiClient.shared)
+        return userDetailViewController
+    }
+}
+
 class UserDetailViewController: UIViewController {
+    var viewModel: UserDetailViewModelType!
+    
+    private lazy var avatarImageView: UIImageView = {
+        let avatarImageView = UIImageView()
+        avatarImageView.contentMode = .scaleAspectFit
+        avatarImageView.translatesAutoresizingMaskIntoConstraints = false
+        avatarImageView.layer.masksToBounds = true
+        view.addSubview(avatarImageView)
+        return avatarImageView
+    }()
+    
+    private lazy var detailsStackView: UIStackView = {
+        let detailsStackView = UIStackView()
+        detailsStackView.axis = .vertical
+        detailsStackView.spacing = Constants.detailsStackSpacing
+        detailsStackView.distribution = .fillProportionally
+        detailsStackView.alignment = .center
+        detailsStackView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(detailsStackView)
+        detailsStackView.addArrangedSubviews([loginLabel,
+                                              idLabel,
+                                              publicRepoLabel,
+                                              locationLabel,
+                                              openDetailsButton
+        ])
+        return detailsStackView
+    }()
+    
+    private lazy var loginLabel: UILabel = {
+        let loginLabel = UILabel()
+        return loginLabel
+    }()
+    
+    private lazy var idLabel: UILabel = {
+        let idLabel = UILabel()
+        return idLabel
+    }()
+    
+    private lazy var publicRepoLabel: UILabel = {
+        let publicRepoLabel = UILabel()
+        return publicRepoLabel
+    }()
+    
+    private lazy var locationLabel: UILabel = {
+        let locationLabel = UILabel()
+        return locationLabel
+    }()
+    
+    private lazy var openDetailsButton: UIButton = {
+        let openDetailsButton = UIButton()
+        openDetailsButton.addTarget(self, action: #selector(didTapOpenDetailsButton), for: .touchUpInside)
+        openDetailsButton.setTitle("Surf Net", for: .normal)
+        return openDetailsButton
+    }()
+    
+    private lazy var activityIndicator: UIActivityIndicatorView = {
+        let activityIndicator = UIActivityIndicatorView()
+        activityIndicator.hidesWhenStopped = true
+        view.addSubview(activityIndicator)
+        return activityIndicator
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        //overrideUserInterfaceStyle = .light
+        setUpUI()
+        setUpDelegates()
+        setUpConstraints()
+        
+        viewModel.viewDidLoad()
     }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        avatarImageView.layer.cornerRadius = avatarImageView.bounds.height / Constants.cornerRadiusDivider
+    }
+}
+
+private extension UserDetailViewController {
+    func setUpUI() {
+        view.backgroundColor = .yellow
+        title = Constants.title
+    }
+    
+    func setUpDelegates() {
+        viewModel.delegate = self
+    }
+    
+    func setUpConstraints() {
+        NSLayoutConstraint.activate([
+            avatarImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: Constants.avatarTop),
+            avatarImageView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: Constants.avatarLeading),
+            avatarImageView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: Constants.avatarTrailing),
+            avatarImageView.heightAnchor.constraint(equalTo: avatarImageView.widthAnchor),
+            
+            detailsStackView.topAnchor.constraint(equalTo: avatarImageView.bottomAnchor, constant: Constants.detailsStackTop),
+            detailsStackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: Constants.detailsStackLeading),
+            detailsStackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: Constants.detailsStackTrailing),
+            detailsStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: Constants.detailsStackBottom)
+        ])
+    }
+    
+    @objc private func didTapOpenDetailsButton() {
+        viewModel.didTapOpenDetailsButton()
+    }
+}
+
+extension UserDetailViewController: UserDetailViewModelDelegate {
+    func showActivityIndicator(_ isLoading: Bool) {
+        if isLoading {
+            activityIndicator.startAnimating()
+        } else {
+            activityIndicator.stopAnimating()
+        }
+    }
+    
+    func loadedUserDetails(_ model: RepoOwner) {
+        showActivityIndicator(false)
+        avatarImageView.image = model.avatarImage
+        locationLabel.text = "Location: " + (model.location ?? "Unknown")
+        idLabel.text = "ID: " + String(model.id)
+        loginLabel.text = "Login: " + model.login
+        publicRepoLabel.text = "Number of public repos: " + String(model.public_repos ?? 0)
+    }
+    
+    func showError(_ message: String) {
+        showActivityIndicator(false)
+        showDefaultAlert(withTitle: Constants.errorTitle, message: message)
+    }
+}
+
+fileprivate enum Constants {
+    static let errorTitle: String = "Error!"
+    static let title: String = "User"
+    
+    static let cornerRadiusDivider: CGFloat = 5
+    
+    static let avatarTop: CGFloat = 30
+    static let avatarLeading: CGFloat = 20
+    static let avatarTrailing: CGFloat = -20
+    
+    static let detailsStackSpacing: CGFloat = 5
+    static let detailsStackTop: CGFloat = 20
+    static let detailsStackLeading: CGFloat = 10
+    static let detailsStackTrailing: CGFloat = -10
+    static let detailsStackBottom: CGFloat = 10
 }

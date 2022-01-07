@@ -20,9 +20,7 @@ class ViewController: UIViewController {
     
     var viewModel: MainViewModelType! = MainViewModel(networkService: ApiClient())
     
-    var isPagination = false
-    
-   // var repos: [RepoModel]?
+   // var isPagination = false
     
     private lazy var activityIndicator: UIActivityIndicatorView =  {
         let activityView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.large)
@@ -33,9 +31,9 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setUpUI()
         setUpDelegates()
         setUpTableView()
-        viewModel.delegate = self
     }
     
     @IBAction func segmentedControlDidChange(_ sender: UISegmentedControl) {
@@ -46,6 +44,10 @@ class ViewController: UIViewController {
 }
 
 extension ViewController: MainViewModelDelegate {
+    func pushController(_ controller: UIViewController) {
+        navigationController?.pushViewController(controller, animated: true)
+    }
+    
     func fetchedRepos() {
         tableView.reloadData()
         activityIndicator.stop()
@@ -79,11 +81,23 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         guard let cell = tableView.dequeueCell(withType: RepositoryTableViewCell.self, for: indexPath) as? RepositoryTableViewCell, let repoModel = viewModel.getRepo(by: indexPath)  else {
             return UITableViewCell()
         }
+        cell.delegate = self
         cell.configure(repoModel)
         return cell
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        viewModel.didSelectRepo(at: indexPath)
+    }
 }
 
+extension ViewController: RepositoryTableViewCellDelegate {
+    func didTapAvatarImage(for indexPath: IndexPath) {
+        viewModel.didSelectUser(at: indexPath)
+    }
+}
+
+//MARK: - UISearchBarDelegate
 extension ViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         tableView.hideEmptyMessage()
@@ -102,10 +116,15 @@ extension ViewController: UISearchBarDelegate {
 
 //MARK: - Private Methods
 private extension ViewController {
+    func setUpUI() {
+        title = Constants.navBarTitle
+    }
+    
     func setUpDelegates() {
         searchBar.delegate = self
         tableView.delegate = self
         tableView.dataSource = self
+        viewModel.delegate = self
     }
     
     func setUpSearchBar() {
@@ -123,4 +142,5 @@ private extension ViewController {
 
 fileprivate enum Constants {
     static let emptyMessage: String = "Please search repos"
+    static let navBarTitle: String = "GitHub API"
 }

@@ -15,35 +15,106 @@ enum ApiError: Error {
 }
 
 protocol ApiClientProtocol {
-    func getRepositoriesModel(searchString: String, searchType: RepoSearchType, completion: @escaping (Swift.Result<[RepoModel], Error>) -> Void)
-//    func downloadAvatarImage(url: String, completion: @escaping (Swift.Result<UIImage?, Error>) -> Void)
+    typealias RepoModelsHandler = (Result<[RepoModel], Error>) -> Void
+    func getRepositoriesModel(searchString: String, searchType: RepoSearchType, completion: @escaping RepoModelsHandler)
 }
 
-class ApiClient: ApiClientProtocol {
-    
+protocol ApiUserDetailProtocol {
+    typealias UserDetailHandler = (Result<RepoOwner, Error>) -> Void
+    func getUserDetails(username: String, completion: @escaping UserDetailHandler)
+}
+
+protocol ApiRepoDetailProtocol {
+    typealias RepoDetailHandler = (Result<RepoModel, Error>) -> Void
+    func getRepoDetails(username: String, repoName: String, completion: @escaping RepoDetailHandler)
+}
+
+class ApiClient {
     static let shared = ApiClient()
     
     let configuration = URLSessionConfiguration.default
     lazy var session = URLSession(configuration: configuration)
     var dataTask: URLSessionDataTask?
+}
+
+//MARK: - ApiRepoDetailProtocol
+extension ApiClient: ApiRepoDetailProtocol {
+    func getRepoDetails(username: String, repoName: String, completion: @escaping (Result<RepoModel, Error>) -> Void) {
+        guard let urlRequest = try? ApiRouter.getRepoDetails(username: username, repoName: repoName).asURLRequest() else {
+            return
+        }
+        requestRepoDetails(urlRequest: urlRequest, completion: completion)
+    }
     
-    typealias RepoModelsHandler = (Swift.Result<[RepoModel], Error>) -> Void
+    private func requestRepoDetails(urlRequest: URLRequest, completion: @escaping RepoDetailHandler) {
+        dataTask?.cancel()
+        dataTask = session.dataTask(with: urlRequest) { data, response, error in
+            if let httpResponse = response as? HTTPURLResponse {
+                print(httpResponse.statusCode)
+            }
+            if error != nil || data == nil {
+                completion(.failure(ApiError.internalServerError))
+            } else {
+                do {
+                    let repoModel = try JSONDecoder().decode(RepoModel.self, from: data!)
+                    completion(.success(repoModel))
+                } catch {
+                    completion(.failure(ApiError.decodingError))
+                }
+            }
+        }
+        dataTask?.resume()
+    }
+}
+
+//MARK: - ApiUserDetailProtocol
+extension ApiClient: ApiUserDetailProtocol {
+    func getUserDetails(username: String, completion: @escaping (Result<RepoOwner, Error>) -> Void) {
+        guard let urlRequest = try? ApiRouter.getUserDetails(username: username).asURLRequest() else {
+            return
+        }
+        requestUserDetails(urlRequest: urlRequest, completion: completion)
+    }
     
+    private func requestUserDetails(urlRequest: URLRequest, completion: @escaping UserDetailHandler) {
+        dataTask?.cancel()
+        dataTask = session.dataTask(with: urlRequest) { data, response, error in
+            if let httpResponse = response as? HTTPURLResponse {
+                print(httpResponse.statusCode)
+            }
+            if error != nil || data == nil {
+                completion(.failure(ApiError.internalServerError))
+            } else {
+                do {
+                    var userModel = try JSONDecoder().decode(RepoOwner.self, from: data!)
+                    if let url = URL(string: userModel.avatar_url), let data = try? Data(contentsOf: url) {
+                        userModel.avatarImage = UIImage(data: data)
+                    }
+                    completion(.success(userModel))
+                } catch {
+                    completion(.failure(ApiError.decodingError))
+                }
+            }
+        }
+        dataTask?.resume()
+    }
+}
+
+//MARK: - ApiClientProtocol
+extension ApiClient: ApiClientProtocol {
     func getRepositoriesModel(searchString: String, searchType: RepoSearchType, completion: @escaping RepoModelsHandler) {
         guard let urlRequest = try? ApiRouter.getRepos(searchString: searchString, searchType: searchType).asURLRequest() else {
             return
         }
         requestRepositoriesModel(urlRequest: urlRequest, completion: completion)
     }
-}
-
-extension ApiClient {
+    
     private func requestRepositoriesModel(urlRequest: URLRequest, completion: @escaping RepoModelsHandler) {
         dataTask?.cancel()
         dataTask = session.dataTask(with: urlRequest) { data, response, error in
             if let httpResponse = response as? HTTPURLResponse {
-                   print(httpResponse.statusCode)
-               }
+                print(httpResponse.statusCode)
+            }
             if error != nil {
                 completion(.failure(ApiError.internalServerError))
             } else {
