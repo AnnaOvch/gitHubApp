@@ -41,8 +41,8 @@ class RepositoryDetailViewModel: RepositoryDetailViewModelType {
                 switch result {
                 case .success(let repoModel):
                     var resultRepoModel = repoModel
-                    resultRepoModel.updated_at = repoModel.modifiedDateString ?? Constants.unknown
-                    resultRepoModel.created_at = repoModel.createdDateString  ?? Constants.unknown
+                    resultRepoModel.modificationDate = repoModel.modifiedDateString
+                    resultRepoModel.creationDate = repoModel.createdDateString
                     self?.repoModel = resultRepoModel
                     self?.delegate?.loadedRepoDetails(resultRepoModel)
                 case .failure(let error):
@@ -53,7 +53,7 @@ class RepositoryDetailViewModel: RepositoryDetailViewModelType {
     }
     
     func didTapOpenDetailsButton() {
-        guard let repoModel = repoModel, let repoURL = repoModel.html_url, let url = URL(string: repoURL) else {
+        guard let repoModel = repoModel, let repoURL = repoModel.url, let url = URL(string: repoURL) else {
              return
         }
         coordinator?.openRepoDetailsInBrowser(by: url)

@@ -135,7 +135,7 @@ extension UserDetailViewController: UserDetailViewModelDelegate {
         locationLabel.text = "Location: " + (model.location ?? "Unknown")
         idLabel.text = "ID: " + String(model.id)
         loginLabel.text = "Login: " + model.login
-        publicRepoLabel.text = "Number of public repos: " + String(model.public_repos ?? 0)
+        publicRepoLabel.text = "Number of public repos: " + String(model.publicReposCount ?? 0)
     }
     
     func showError(_ message: String) {

@@ -89,7 +89,7 @@ extension ApiClient: ApiUserDetailProtocol {
             } else {
                 do {
                     var userModel = try JSONDecoder().decode(RepoOwner.self, from: data!)
-                    if let url = URL(string: userModel.avatar_url), let data = try? Data(contentsOf: url) {
+                    if let url = URL(string: userModel.avatarURL), let data = try? Data(contentsOf: url) {
                         userModel.avatarImage = UIImage(data: data)
                     }
                     completion(.success(userModel))
@@ -122,9 +122,9 @@ extension ApiClient: ApiClientProtocol {
             } else {
                 do {
                     let repositoryModel = try JSONDecoder().decode(RepositoriesModel.self, from: data!)
-                    print(repositoryModel.items.count)
-                    let resultItems = repositoryModel.items.map({ item -> RepoModel in
-                        guard let url = URL(string: item.owner.avatar_url) else { return item }
+                    print(repositoryModel.repos.count)
+                    let resultItems = repositoryModel.repos.map({ item -> RepoModel in
+                        guard let url = URL(string: item.owner.avatarURL) else { return item }
                         var newItem = item
                         if let data = try? Data(contentsOf: url) {
                             newItem.avatarImage = UIImage(data: data)

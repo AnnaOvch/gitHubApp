@@ -18,7 +18,8 @@ class ViewController: UIViewController, Storyboarded {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var segmentedControl: UISegmentedControl!
-    let debouncer = Debouncer(delay: 3)
+    
+    private let debouncer = Debouncer(delay: Constants.debounceDelay)
     
     var viewModel: MainViewModelType!
     
@@ -75,7 +76,7 @@ extension ViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let contentOffsetY = scrollView.contentOffset.y
         if contentOffsetY >= tableView.contentSize.height - scrollView.frame.size.height {
-            guard !viewModel.isLoadingData, let searchText = searchBar.text else {
+            guard !viewModel.isLoadingData, let searchText = searchBar.text, let reposCount =  viewModel.getReposCount(), reposCount > 0 else {
                 return
             }
             
@@ -166,6 +167,7 @@ private extension ViewController {
         tableView.tableFooterView = UIView()
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = Constants.estimatedRowHeight
+        tableView.keyboardDismissMode = .onDrag
     }
 }
 
@@ -173,7 +175,7 @@ private extension ViewController {
 fileprivate enum Constants {
     static let emptyMessage: String = "Please search repos"
     static let navBarTitle: String = "GitHub API"
-    
     static let estimatedRowHeight: CGFloat = 44.0
     static let spinnerHeight: CGFloat = 100
+    static let debounceDelay: Double = 3
 }

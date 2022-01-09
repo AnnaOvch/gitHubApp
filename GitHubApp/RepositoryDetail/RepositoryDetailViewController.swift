@@ -145,8 +145,8 @@ extension RepositoryDetailViewController: RepositoryDetailViewModelDelegate {
     func loadedRepoDetails(_ model: RepoModel) {
         showActivityIndicator(false)
         programmingLangageLabel.text =  Constants.languageTitle + (model.language ?? Constants.unknown)
-        dateOfCreationLabel.text = Constants.createdAtTitle + (model.created_at ?? Constants.unknown)
-        dateOfModificationLabel.text = Constants.modifiedAtTitle + (model.updated_at ?? Constants.unknown)
+        dateOfCreationLabel.text = Constants.createdAtTitle + (model.creationDate ?? Constants.unknown)
+        dateOfModificationLabel.text = Constants.modifiedAtTitle + (model.modificationDate ?? Constants.unknown)
     }
     
     func showError(_ message: String) {

@@ -7,12 +7,12 @@
 
 import Foundation
 
-extension String {
-    func utcToLocal() -> String? {
+struct FormatDate {
+    static func utcToLocal(_ str: String) -> String? {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
 
-        guard let date = dateFormatter.date(from: self) else { return nil }
+        guard let date = dateFormatter.date(from: str) else { return nil }
         dateFormatter.dateFormat = "MMM d, yyyy"
         return dateFormatter.string(from: date)
     }

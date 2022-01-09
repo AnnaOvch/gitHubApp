@@ -30,9 +30,9 @@ class RepositoryTableViewCell: UITableViewCell {
         repoNameLabel.text = Constants.repoName + model.name
         authorImageView.image =  model.avatarImage
         authorNameLabel.text = Constants.authorName + model.owner.login
-        watchersLabel.text = Constants.numWatchers + String(model.watchers_count)
-        forksLabel.text = Constants.numForks + String(model.forks_count)
-        issuesLabel.text = Constants.numIssues + String(model.open_issues)
+        watchersLabel.text = Constants.numWatchers + String(model.watchersCount)
+        forksLabel.text = Constants.numForks + String(model.forksCount)
+        issuesLabel.text = Constants.numIssues + String(model.issuesCount)
     }
     
     override func prepareForReuse() {

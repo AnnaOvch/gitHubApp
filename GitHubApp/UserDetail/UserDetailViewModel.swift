@@ -47,7 +47,7 @@ class UserDetailViewModel: UserDetailViewModelType {
     }
     
     func didTapOpenDetailsButton() {
-        guard let userModel = userModel, let userURL = userModel.html_url, let url = URL(string: userURL) else {
+        guard let userModel = userModel, let userURL = userModel.url, let url = URL(string: userURL) else {
              return
         }
         coordinator?.openUserDetailsInBrowser(by: url)

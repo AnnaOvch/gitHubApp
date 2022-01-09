@@ -7,7 +7,12 @@
 
 import Foundation
 
-struct RepositoriesModel: Codable {
-    let total_count: Int
-    let items: [RepoModel]
+struct RepositoriesModel: Decodable {
+    let reposCount: Int
+    let repos: [RepoModel]
+    
+    private enum CodingKeys: String, CodingKey {
+        case reposCount = "total_count"
+        case repos = "items"
+    }
 }

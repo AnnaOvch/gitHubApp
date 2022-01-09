@@ -7,38 +7,51 @@
 
 import UIKit
 
-struct RepoModel: Codable {
+struct RepoModel: Decodable {
     let name: String
-    let full_name: String
-    let watchers_count: Int
-    let forks_count: Int
-    let open_issues: Int
+    let fullName: String
+    let watchersCount: Int
+    let forksCount: Int
+    let issuesCount: Int
     let owner: RepoOwner
     
     let language: String?
-    var created_at: String?
-    var updated_at: String?
-    let html_url: String?
+    var creationDate: String?
+    var modificationDate: String?
+    let url: String?
     
     private enum CodingKeys: String, CodingKey {
         case name
-        case full_name
-        case watchers_count
-        case forks_count
-        case open_issues
+        case fullName = "full_name"
+        case watchersCount = "watchers_count"
+        case forksCount = "forks_count"
+        case issuesCount = "open_issues"
         case owner
         case language
-        case created_at
-        case updated_at
-        case html_url
+        case creationDate = "created_at"
+        case modificationDate = "updated_at"
+        case url = "html_url"
     }
     
     var avatarImage: UIImage?
+}
+
+extension RepoModel {
+    var createdDateString: String {
+        guard let created = creationDate, let result = FormatDate.utcToLocal(created) else {
+            return Constants.unknown
+        }
+        return result
+    }
     
-    var createdDateString: String? {
-        return created_at?.utcToLocal()
+    var modifiedDateString: String {
+        guard let modified = modificationDate, let result =  FormatDate.utcToLocal(modified) else {
+            return Constants.unknown
+        }
+        return result
     }
-    var modifiedDateString: String? {
-        return updated_at?.utcToLocal()
-    }
+}
+
+fileprivate enum Constants {
+    static let unknown: String = "Unknown"
 }
