@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftDebouncer
 //extension UIViewController {
 //    static func make() -> UIViewController {
 //        let viewController = UIViewController()
@@ -17,6 +18,7 @@ class ViewController: UIViewController, Storyboarded {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var segmentedControl: UISegmentedControl!
+    let debouncer = Debouncer(delay: 3)
     
     var viewModel: MainViewModelType!// = MainViewModel(networkService: ApiClient())
     
@@ -63,6 +65,12 @@ extension ViewController: UIScrollViewDelegate {
     }
 }
 
+//extension ViewController: UISearchBarDelegate {
+//    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+//        view.endEditing(true)
+//    }
+//}
+
 //MARK: - UITableViewDelegate && UITableViewDataSource
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -95,10 +103,16 @@ extension ViewController: RepositoryTableViewCellDelegate {
 
 //MARK: - UISearchBarDelegate
 extension ViewController: UISearchBarDelegate {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        view.endEditing(true)
+    }
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         tableView.hideEmptyMessage()
-        activityIndicator.start()
-        perform(#selector(getRepositories), with: nil, afterDelay: 0.3)
+        if !activityIndicator.isAnimating { activityIndicator.start() }
+        debouncer.callback = { [weak self] in
+            self?.getRepositories()
+        }
+        debouncer.call()
     }
     
     @objc func getRepositories() {
@@ -114,6 +128,7 @@ extension ViewController: UISearchBarDelegate {
 private extension ViewController {
     func setUpUI() {
         title = Constants.navBarTitle
+        searchBar.returnKeyType = .done
     }
     
     func setUpDelegates() {
@@ -132,11 +147,13 @@ private extension ViewController {
         tableView.registerCell(type: RepositoryTableViewCell.self, identifier: RepositoryTableViewCell.identifier)
         tableView.tableFooterView = UIView()
         tableView.rowHeight = UITableView.automaticDimension
-        tableView.estimatedRowHeight = 44.0
+        tableView.estimatedRowHeight = Constants.estimatedRowHeight
     }
 }
 
 fileprivate enum Constants {
     static let emptyMessage: String = "Please search repos"
     static let navBarTitle: String = "GitHub API"
+    
+    static let estimatedRowHeight: CGFloat = 44.0
 }
