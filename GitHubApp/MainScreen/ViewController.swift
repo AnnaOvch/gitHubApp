@@ -20,15 +20,25 @@ class ViewController: UIViewController, Storyboarded {
     @IBOutlet weak var segmentedControl: UISegmentedControl!
     let debouncer = Debouncer(delay: 3)
     
-    var viewModel: MainViewModelType!// = MainViewModel(networkService: ApiClient())
+    var viewModel: MainViewModelType!
     
-   // var isPagination = false
-    
-    private lazy var activityIndicator: UIActivityIndicatorView =  {
+    private lazy var activityIndicator: UIActivityIndicatorView = {
         let activityView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.large)
         activityView.center = self.view.center
         view.addSubview(activityView)
         return activityView
+    }()
+    
+    private lazy var bottomSpinner: UIActivityIndicatorView = {
+        let spinner = UIActivityIndicatorView()
+        return spinner
+    }()
+    
+    private lazy var spinnerFooterView: UIView = {
+        let spinnerFooterView = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: Constants.spinnerHeight))
+        bottomSpinner.center = spinnerFooterView.center
+        spinnerFooterView.addSubview(bottomSpinner)
+        return spinnerFooterView
     }()
     
     override func viewDidLoad() {
@@ -45,31 +55,37 @@ class ViewController: UIViewController, Storyboarded {
     }
 }
 
+//MARK: - MainViewModelDelegate
 extension ViewController: MainViewModelDelegate {
     func fetchedRepos() {
         tableView.reloadData()
         activityIndicator.stop()
+        viewModel.didUpdateUI()
+    }
+    
+    func fetchedAdditionalRepos() {
+        tableView.tableFooterView = nil
+        tableView.reloadData()
+        viewModel.didUpdateUI()
     }
 }
 
+//MARK: - UIScrollViewDelegate
 extension ViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let contentOffsetY = scrollView.contentOffset.y
         if contentOffsetY >= tableView.contentSize.height - scrollView.frame.size.height {
-//            guard !isPaginationOn else {
-//                return
-//            }
-            print("pagination")
+            guard !viewModel.isLoadingData, let searchText = searchBar.text else {
+                return
+            }
             
+            tableView.tableFooterView = spinnerFooterView
+            bottomSpinner.startAnimating()
+            
+            viewModel.getRepos(page: viewModel.page, by: searchText, searchType: RepoSearchType(rawValue: segmentedControl.selectedSegmentIndex) ?? .usual)
         }
     }
 }
-
-//extension ViewController: UISearchBarDelegate {
-//    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-//        view.endEditing(true)
-//    }
-//}
 
 //MARK: - UITableViewDelegate && UITableViewDataSource
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
@@ -95,6 +111,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
+//MARK: - RepositoryTableViewCellDelegate
 extension ViewController: RepositoryTableViewCellDelegate {
     func didTapAvatarImage(for indexPath: IndexPath) {
         viewModel.didSelectUser(at: indexPath)
@@ -106,6 +123,7 @@ extension ViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         view.endEditing(true)
     }
+    
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         tableView.hideEmptyMessage()
         if !activityIndicator.isAnimating { activityIndicator.start() }
@@ -151,9 +169,11 @@ private extension ViewController {
     }
 }
 
+//MARK: - Constants
 fileprivate enum Constants {
     static let emptyMessage: String = "Please search repos"
     static let navBarTitle: String = "GitHub API"
     
     static let estimatedRowHeight: CGFloat = 44.0
+    static let spinnerHeight: CGFloat = 100
 }

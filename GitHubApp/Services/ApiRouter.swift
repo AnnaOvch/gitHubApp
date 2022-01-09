@@ -14,7 +14,8 @@ enum ApiRouterError: Error {
 
 enum ApiRouter: URLRequestConvertible {
     
-    case getRepos(searchString: String, searchType: RepoSearchType = .usual)
+//    case getRepos(searchString: String, searchType: RepoSearchType = .usual)
+    case getRepos(page: Int, searchString: String, searchType: RepoSearchType = .usual)
     case getUserDetails(username: String)
     case getRepoDetails(username: String, repoName: String)
     
@@ -67,8 +68,8 @@ enum ApiRouter: URLRequestConvertible {
     
     private var queryItems: [URLQueryItem]? {
         switch self {
-        case let .getRepos(searchString, searchType):
-           return makeRepoQueryItems(searchString: searchString, searchType: searchType)
+        case let .getRepos(page, searchString, searchType):
+            return makeRepoQueryItems(page: page, searchString: searchString, searchType: searchType)
         case .getUserDetails, .getRepoDetails:
             return nil
         }
@@ -83,7 +84,7 @@ enum ApiRouter: URLRequestConvertible {
 }
 
 private extension ApiRouter {
-    func makeRepoQueryItems(searchString: String, searchType: RepoSearchType) -> [URLQueryItem] {
+    func makeRepoQueryItems(page: Int, searchString: String, searchType: RepoSearchType) -> [URLQueryItem] {
         switch searchType {
         case .forks:
             return [URLQueryItem(name: "q", value: searchString), URLQueryItem(name: "sort", value: "forks"), URLQueryItem(name: "per_page", value: Constants.countPerPage)]
@@ -92,7 +93,7 @@ private extension ApiRouter {
         case .updates:
             return [URLQueryItem(name: "q", value: searchString), URLQueryItem(name: "sort", value: "updated"), URLQueryItem(name: "per_page", value: Constants.countPerPage)]
         case .usual:
-            return [URLQueryItem(name: "q", value: searchString), URLQueryItem(name: "per_page", value: Constants.countPerPage)]
+            return [URLQueryItem(name: "q", value: searchString), URLQueryItem(name: "per_page", value: Constants.countPerPage), URLQueryItem(name: "page", value: String(page))]
         }
     }
 }

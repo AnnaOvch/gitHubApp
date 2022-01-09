@@ -16,7 +16,8 @@ enum ApiError: Error {
 
 protocol ApiClientProtocol {
     typealias RepoModelsHandler = (Result<[RepoModel], Error>) -> Void
-    func getRepositoriesModel(searchString: String, searchType: RepoSearchType, completion: @escaping RepoModelsHandler)
+   // func getRepositoriesModel(searchString: String, searchType: RepoSearchType, completion: @escaping RepoModelsHandler)
+    func getRepositoriesModel(page: Int, searchString: String, searchType: RepoSearchType, completion: @escaping RepoModelsHandler)
 }
 
 protocol ApiUserDetailProtocol {
@@ -103,8 +104,8 @@ extension ApiClient: ApiUserDetailProtocol {
 
 //MARK: - ApiClientProtocol
 extension ApiClient: ApiClientProtocol {
-    func getRepositoriesModel(searchString: String, searchType: RepoSearchType, completion: @escaping RepoModelsHandler) {
-        guard let urlRequest = try? ApiRouter.getRepos(searchString: searchString, searchType: searchType).asURLRequest() else {
+    func getRepositoriesModel(page: Int, searchString: String, searchType: RepoSearchType, completion: @escaping RepoModelsHandler) {
+        guard let urlRequest = try? ApiRouter.getRepos(page: page, searchString: searchString, searchType: searchType).asURLRequest() else {
             return
         }
         requestRepositoriesModel(urlRequest: urlRequest, completion: completion)
