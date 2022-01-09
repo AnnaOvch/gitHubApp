@@ -7,13 +7,13 @@
 
 import UIKit
 
-extension RepositoryDetailViewController {
-    static func make(username: String, reponame: String) -> RepositoryDetailViewController {
-        let repoDetailViewController = RepositoryDetailViewController()
-        repoDetailViewController.viewModel = RepositoryDetailViewModel(username: username,reponame: reponame, networkService: ApiClient.shared)
-        return repoDetailViewController
-    }
-}
+//extension RepositoryDetailViewController {
+//    static func make(username: String, reponame: String) -> RepositoryDetailViewController {
+//        let repoDetailViewController = RepositoryDetailViewController()
+//        repoDetailViewController.viewModel = RepositoryDetailViewModel(username: username,reponame: reponame, networkService: ApiClient.shared)
+//        return repoDetailViewController
+//    }
+//}
 
 class RepositoryDetailViewController: UIViewController {
     var viewModel: RepositoryDetailViewModelType!
@@ -29,8 +29,10 @@ class RepositoryDetailViewController: UIViewController {
         detailsStackView.addArrangedSubviews([programmingLangageLabel,
                                               dateOfCreationLabel,
                                               dateOfModificationLabel,
-                                              openDetailsButton
+                                              buttonsStackView
+                                              //openDetailsButton
         ])
+        detailsStackView.setCustomSpacing(Constants.buttonSpacing, after: dateOfModificationLabel)
         return detailsStackView
     }()
     
@@ -49,11 +51,40 @@ class RepositoryDetailViewController: UIViewController {
         return dateOfModificationLabel
     }()
     
-    private lazy var openDetailsButton: UIButton = {
-        let openDetailsButton = UIButton()
-        openDetailsButton.setTitle(Constants.buttonTitle, for: .normal)
+    private lazy var openDetailsButton: CustomButton = {
+        let openDetailsButton = CustomButton()
+        openDetailsButton.titleText = Constants.detailsButtonTitle
+        openDetailsButton.titleColor = .blue
+        openDetailsButton.borderColor = UIColor.purple.cgColor
+        openDetailsButton.borderWidth = 1
+        openDetailsButton.contentSpacing = 8
+        openDetailsButton.topBottomSpacing = 8
         openDetailsButton.addTarget(self, action: #selector(didTapOpenDetailsButton), for: .touchUpInside)
         return openDetailsButton
+    }()
+    
+    private lazy var openUserDetailsButton: CustomButton = {
+        let openDetailsButton = CustomButton()
+        openDetailsButton.titleText = Constants.userDetailsButtonTitle
+        openDetailsButton.titleColor = .blue
+        openDetailsButton.borderColor = UIColor.purple.cgColor
+        openDetailsButton.borderWidth = 1
+        openDetailsButton.contentSpacing = 8
+        openDetailsButton.topBottomSpacing = 8
+        openDetailsButton.addTarget(self, action: #selector(didTapOpenUserDetailsButton), for: .touchUpInside)
+        return openDetailsButton
+    }()
+    
+    private lazy var buttonsStackView: UIStackView = {
+        let buttonsStackView = UIStackView()
+        buttonsStackView.axis = .horizontal
+        buttonsStackView.spacing = Constants.buttonsStackSpacing
+        buttonsStackView.distribution = .fillEqually
+        buttonsStackView.alignment = .center
+        buttonsStackView.addArrangedSubviews([openDetailsButton,
+                                              openUserDetailsButton
+        ])
+        return buttonsStackView
     }()
     
     private lazy var activityIndicator: UIActivityIndicatorView = {
@@ -76,7 +107,7 @@ class RepositoryDetailViewController: UIViewController {
 //MARK: - Private Methods
 private extension RepositoryDetailViewController {
     func setUpUI() {
-        view.backgroundColor = .yellow
+        view.backgroundColor = UIColor.getCustomBlueColor()
         title = Constants.title
     }
     
@@ -94,6 +125,10 @@ private extension RepositoryDetailViewController {
     
     @objc func didTapOpenDetailsButton() {
         viewModel.didTapOpenDetailsButton()
+    }
+    
+    @objc func didTapOpenUserDetailsButton() {
+        viewModel.didTapOpenUserDetailsButton()
     }
 }
 
@@ -122,7 +157,8 @@ extension RepositoryDetailViewController: RepositoryDetailViewModelDelegate {
 
 fileprivate enum Constants {
     static let errorTitle: String = "Error!"
-    static let buttonTitle: String = "Surf Net"
+    static let detailsButtonTitle: String = "Surf Net"
+    static let userDetailsButtonTitle: String = "Owner Info"
     static let title: String = "Repository"
     
     static let languageTitle: String = "Language: "
@@ -130,9 +166,12 @@ fileprivate enum Constants {
     static let modifiedAtTitle: String = "Last modified at: "
     static let unknown: String = "Unknown"
     
-    static let detailsStackSpacing: CGFloat = 5
+    static let detailsStackSpacing: CGFloat = 8
     static let detailsStackTop: CGFloat = 20
     static let detailsStackLeading: CGFloat = 10
     static let detailsStackTrailing: CGFloat = -10
+    static let buttonsStackSpacing: CGFloat = 20
+    
+    static let buttonSpacing: CGFloat = 30
 }
 

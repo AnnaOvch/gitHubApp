@@ -11,6 +11,7 @@ protocol RepositoryDetailViewModelType {
     var delegate: RepositoryDetailViewModelDelegate? { get set }
     func viewDidLoad()
     func didTapOpenDetailsButton()
+    func didTapOpenUserDetailsButton()
 }
 
 protocol RepositoryDetailViewModelDelegate: AnyObject {
@@ -21,6 +22,7 @@ protocol RepositoryDetailViewModelDelegate: AnyObject {
 
 class RepositoryDetailViewModel: RepositoryDetailViewModelType {
     weak var delegate: RepositoryDetailViewModelDelegate?
+    weak var coordinator: MainCoordinator?
     private let networkService: ApiRepoDetailProtocol!
     private let username: String!
     private let reponame: String!
@@ -54,9 +56,14 @@ class RepositoryDetailViewModel: RepositoryDetailViewModelType {
         guard let repoModel = repoModel, let repoURL = repoModel.html_url, let url = URL(string: repoURL) else {
              return
         }
-        if UIApplication.shared.canOpenURL(url) {
-             UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        coordinator?.openRepoDetailsInBrowser(by: url)
+    }
+    
+    func didTapOpenUserDetailsButton() {
+        guard let username = repoModel?.owner.login else {
+             return
         }
+        coordinator?.pushUserDetails(username: username)
     }
 }
 

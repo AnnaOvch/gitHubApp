@@ -26,12 +26,13 @@ protocol MainViewModelType {
 
 protocol MainViewModelDelegate: AnyObject {
     func fetchedRepos()
-    func pushController(_ controller: UIViewController)
+    //func pushController(_ controller: UIViewController)
 }
 
 class MainViewModel: MainViewModelType {
     weak var delegate: MainViewModelDelegate?
     
+    weak var coordinator: MainCoordinator?
     private let networkService: ApiClientProtocol!
     
     private var repos: [RepoModel]?
@@ -57,7 +58,6 @@ class MainViewModel: MainViewModelType {
                 case .success(let models):
                     self?.repos = models
                     self?.delegate?.fetchedRepos()
-                   // self?.tableView.reloadData()
                 case .failure(let error):
                     print(error)
                 }
@@ -75,13 +75,11 @@ class MainViewModel: MainViewModelType {
     
     func didSelectRepo(at indexPath: IndexPath) {
         guard let username = repos?[indexPath.row].owner.login, let reponame = repos?[indexPath.row].name else { return }
-        let detailRepoController = RepositoryDetailViewController.make(username: username, reponame: reponame)
-        delegate?.pushController(detailRepoController)
+        coordinator?.pushRepoDetails(username: username, reponame: reponame)
     }
     
     func didSelectUser(at indexPath: IndexPath) {
         guard let username = repos?[indexPath.row].owner.login else { return }
-        let detailUserController = UserDetailViewController.make(for: username)
-        delegate?.pushController(detailUserController)
+        coordinator?.pushUserDetails(username: username)
     }
 }

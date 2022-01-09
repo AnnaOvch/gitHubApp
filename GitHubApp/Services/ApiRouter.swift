@@ -86,13 +86,17 @@ private extension ApiRouter {
     func makeRepoQueryItems(searchString: String, searchType: RepoSearchType) -> [URLQueryItem] {
         switch searchType {
         case .forks:
-            return [URLQueryItem(name: "q", value: searchString), URLQueryItem(name: "sort", value: "forks")]
+            return [URLQueryItem(name: "q", value: searchString), URLQueryItem(name: "sort", value: "forks"), URLQueryItem(name: "per_page", value: Constants.countPerPage)]
         case .starts:
-            return [URLQueryItem(name: "q", value: searchString), URLQueryItem(name: "sort", value: "stars")]
+            return [URLQueryItem(name: "q", value: searchString), URLQueryItem(name: "sort", value: "stars"), URLQueryItem(name: "per_page", value: Constants.countPerPage)]
         case .updates:
-            return [URLQueryItem(name: "q", value: searchString), URLQueryItem(name: "sort", value: "updated")]
+            return [URLQueryItem(name: "q", value: searchString), URLQueryItem(name: "sort", value: "updated"), URLQueryItem(name: "per_page", value: Constants.countPerPage)]
         case .usual:
-            return [URLQueryItem(name: "q", value: searchString), URLQueryItem(name: "per_page", value: "100")]
+            return [URLQueryItem(name: "q", value: searchString), URLQueryItem(name: "per_page", value: Constants.countPerPage)]
         }
     }
+}
+
+fileprivate enum Constants {
+    static let countPerPage: String = "5"
 }

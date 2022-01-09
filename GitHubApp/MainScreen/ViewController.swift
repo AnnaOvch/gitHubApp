@@ -13,12 +13,12 @@ import UIKit
 //    }
 //}
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, Storyboarded {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var segmentedControl: UISegmentedControl!
     
-    var viewModel: MainViewModelType! = MainViewModel(networkService: ApiClient())
+    var viewModel: MainViewModelType!// = MainViewModel(networkService: ApiClient())
     
    // var isPagination = false
     
@@ -44,10 +44,6 @@ class ViewController: UIViewController {
 }
 
 extension ViewController: MainViewModelDelegate {
-    func pushController(_ controller: UIViewController) {
-        navigationController?.pushViewController(controller, animated: true)
-    }
-    
     func fetchedRepos() {
         tableView.reloadData()
         activityIndicator.stop()

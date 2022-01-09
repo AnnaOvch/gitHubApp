@@ -21,6 +21,7 @@ protocol UserDetailViewModelDelegate: AnyObject {
 
 class UserDetailViewModel: UserDetailViewModelType {
     weak var delegate: UserDetailViewModelDelegate?
+    weak var coordinator: MainCoordinator?
     private let networkService: ApiUserDetailProtocol!
     private let username: String!
     private var userModel: RepoOwner?
@@ -49,8 +50,6 @@ class UserDetailViewModel: UserDetailViewModelType {
         guard let userModel = userModel, let userURL = userModel.html_url, let url = URL(string: userURL) else {
              return
         }
-        if UIApplication.shared.canOpenURL(url) {
-             UIApplication.shared.open(url, options: [:], completionHandler: nil)
-        }
+        coordinator?.openUserDetailsInBrowser(by: url)
     }
 }

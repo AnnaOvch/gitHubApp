@@ -7,14 +7,6 @@
 
 import UIKit
 
-extension UserDetailViewController {
-    static func make(for username: String) -> UserDetailViewController {
-        let userDetailViewController = UserDetailViewController()
-        userDetailViewController.viewModel = UserDetailViewModel(username: username, networkService: ApiClient.shared)
-        return userDetailViewController
-    }
-}
-
 class UserDetailViewController: UIViewController {
     var viewModel: UserDetailViewModelType!
     
@@ -41,6 +33,7 @@ class UserDetailViewController: UIViewController {
                                               locationLabel,
                                               openDetailsButton
         ])
+        detailsStackView.setCustomSpacing(Constants.buttonSpacing, after: locationLabel)
         return detailsStackView
     }()
     
@@ -64,10 +57,15 @@ class UserDetailViewController: UIViewController {
         return locationLabel
     }()
     
-    private lazy var openDetailsButton: UIButton = {
-        let openDetailsButton = UIButton()
+    private lazy var openDetailsButton: CustomButton = {
+        let openDetailsButton = CustomButton()
+        openDetailsButton.cornerRadiusDivider = 2
+        openDetailsButton.titleText = "Surf Net"
+        openDetailsButton.titleColor = .black
+        openDetailsButton.borderColor = UIColor.white.cgColor
+        openDetailsButton.borderWidth = 3
+        openDetailsButton.contentSpacing = 8
         openDetailsButton.addTarget(self, action: #selector(didTapOpenDetailsButton), for: .touchUpInside)
-        openDetailsButton.setTitle("Surf Net", for: .normal)
         return openDetailsButton
     }()
     
@@ -80,7 +78,6 @@ class UserDetailViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        //overrideUserInterfaceStyle = .light
         setUpUI()
         setUpDelegates()
         setUpConstraints()
@@ -96,7 +93,7 @@ class UserDetailViewController: UIViewController {
 
 private extension UserDetailViewController {
     func setUpUI() {
-        view.backgroundColor = .yellow
+        view.backgroundColor = UIColor.getCustomBlueColor()
         title = Constants.title
     }
     
@@ -113,8 +110,8 @@ private extension UserDetailViewController {
             
             detailsStackView.topAnchor.constraint(equalTo: avatarImageView.bottomAnchor, constant: Constants.detailsStackTop),
             detailsStackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: Constants.detailsStackLeading),
-            detailsStackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: Constants.detailsStackTrailing),
-            detailsStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: Constants.detailsStackBottom)
+            detailsStackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: Constants.detailsStackTrailing)//,
+           // detailsStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: Constants.detailsStackBottom)
         ])
     }
     
@@ -154,12 +151,13 @@ fileprivate enum Constants {
     static let cornerRadiusDivider: CGFloat = 5
     
     static let avatarTop: CGFloat = 30
-    static let avatarLeading: CGFloat = 20
-    static let avatarTrailing: CGFloat = -20
+    static let avatarLeading: CGFloat = 40
+    static let avatarTrailing: CGFloat = -40
     
-    static let detailsStackSpacing: CGFloat = 5
+    static let detailsStackSpacing: CGFloat = 8
     static let detailsStackTop: CGFloat = 20
     static let detailsStackLeading: CGFloat = 10
     static let detailsStackTrailing: CGFloat = -10
-    static let detailsStackBottom: CGFloat = 10
+    
+    static let buttonSpacing: CGFloat = 35
 }

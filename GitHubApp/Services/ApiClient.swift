@@ -31,6 +31,7 @@ protocol ApiRepoDetailProtocol {
 
 class ApiClient {
     static let shared = ApiClient()
+    private init() {}
     
     let configuration = URLSessionConfiguration.default
     lazy var session = URLSession(configuration: configuration)
