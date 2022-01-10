@@ -87,6 +87,11 @@ extension ViewController: MainViewModelDelegate {
         tableView.reloadData()
         viewModel.didUpdateUI()
     }
+    
+    func showAlert(_ message: String) {
+        stopActivityIndicator()
+        showDefaultAlert(withTitle: "Error", message: message)
+    }
 }
 
 //MARK: - UIScrollViewDelegate

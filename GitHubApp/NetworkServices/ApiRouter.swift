@@ -85,13 +85,13 @@ private extension ApiRouter {
     func makeRepoQueryItems(page: Int, searchString: String, searchType: RepoSearchType) -> [URLQueryItem] {
         switch searchType {
         case .forks:
-            return [URLQueryItem(name: "q", value: searchString), URLQueryItem(name: "sort", value: "forks"), URLQueryItem(name: "per_page", value: Constants.countPerPage)]
+            return [URLQueryItem(name: "q", value: searchString), URLQueryItem(name: "sort", value: "forks"), URLQueryItem(name: "per_page", value: Constants.countPerPage), URLQueryItem(name: "X-RateLimit-Limit", value: "60")]
         case .starts:
-            return [URLQueryItem(name: "q", value: searchString), URLQueryItem(name: "sort", value: "stars"), URLQueryItem(name: "per_page", value: Constants.countPerPage)]
+            return [URLQueryItem(name: "q", value: searchString), URLQueryItem(name: "sort", value: "stars"), URLQueryItem(name: "per_page", value: Constants.countPerPage), URLQueryItem(name: "X-RateLimit-Limit", value: "60")]
         case .updates:
-            return [URLQueryItem(name: "q", value: searchString), URLQueryItem(name: "sort", value: "updated"), URLQueryItem(name: "per_page", value: Constants.countPerPage)]
+            return [URLQueryItem(name: "q", value: searchString), URLQueryItem(name: "sort", value: "updated"), URLQueryItem(name: "per_page", value: Constants.countPerPage), URLQueryItem(name: "X-RateLimit-Limit", value: "60")]
         case .usual:
-            return [URLQueryItem(name: "q", value: searchString), URLQueryItem(name: "per_page", value: Constants.countPerPage), URLQueryItem(name: "page", value: String(page))]
+            return [URLQueryItem(name: "q", value: searchString), URLQueryItem(name: "per_page", value: Constants.countPerPage), URLQueryItem(name: "page", value: String(page)), URLQueryItem(name: "X-RateLimit-Limit", value: "60")]
         }
     }
 }

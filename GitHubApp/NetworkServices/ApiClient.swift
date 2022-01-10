@@ -8,14 +8,8 @@
 import Foundation
 import UIKit
 
-enum ApiError: Error {
-    case serverConnectionError
-    case internalServerError
-    case decodingError
-}
-
 protocol ApiClientProtocol {
-    typealias RepoModelsHandler = (Result<[RepoModel], Error>) -> Void
+    typealias RepoModelsHandler = (Result<[RepoModel], ApiError>) -> Void
     func getRepositoriesModel(page: Int, searchString: String, searchType: RepoSearchType, completion: @escaping RepoModelsHandler)
 }
 
@@ -36,6 +30,7 @@ class ApiClient {
     let configuration = URLSessionConfiguration.default
     lazy var session = URLSession(configuration: configuration)
     var dataTask: URLSessionDataTask?
+    var searchRateLimit: Int = 10
 }
 
 //MARK: - ApiRepoDetailProtocol
@@ -112,12 +107,15 @@ extension ApiClient: ApiClientProtocol {
     
     private func requestRepositoriesModel(urlRequest: URLRequest, completion: @escaping RepoModelsHandler) {
         dataTask?.cancel()
-        dataTask = session.dataTask(with: urlRequest) { data, response, error in
+        dataTask = session.dataTask(with: urlRequest) { [weak self] data, response, error in
+            let httpResponse = response as? HTTPURLResponse
             if error != nil {
                 completion(.failure(ApiError.internalServerError))
-            } else if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
+            } else if httpResponse?.statusCode == 200 {
                 do {
-                    print(response)
+                    if let rateLimitResponse = httpResponse?.allHeaderFields["x-ratelimit-remaining"] as? String, let rateLimit = Int(rateLimitResponse) {
+                        self?.searchRateLimit = rateLimit
+                    }
                     let repositoryModel = try JSONDecoder().decode(RepositoriesModel.self, from: data!)
                     let resultItems = repositoryModel.repos.map({ item -> RepoModel in
                         guard let url = URL(string: item.owner.avatarURL) else { return item }
@@ -131,9 +129,10 @@ extension ApiClient: ApiClientProtocol {
                 } catch {
                     completion(.failure(ApiError.decodingError))
                 }
-            } else if let httpResponse = response as? HTTPURLResponse {
-                print("http reponse \(httpResponse)")
-                print(response)
+            } else if self?.searchRateLimit == 0 && httpResponse?.statusCode == 403 {
+                completion(.failure(ApiError.rateLimitExceed))
+            } else {
+                completion(.failure(ApiError.unknownError))
             }
         }
         dataTask?.resume()

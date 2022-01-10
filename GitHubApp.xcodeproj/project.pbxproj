@@ -39,6 +39,7 @@
 		95237B59278AF3F600A824AE /* UIColor+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95237B58278AF3F500A824AE /* UIColor+Extension.swift */; };
 		95237B5C278AF66100A824AE /* CustomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95237B5B278AF66100A824AE /* CustomButton.swift */; };
 		95237B5E278B6A2100A824AE /* RepoSearchType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95237B5D278B6A2100A824AE /* RepoSearchType.swift */; };
+		95237B60278C8D9700A824AE /* ApiError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95237B5F278C8D9700A824AE /* ApiError.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -77,6 +78,7 @@
 		95237B58278AF3F500A824AE /* UIColor+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extension.swift"; sourceTree = "<group>"; };
 		95237B5B278AF66100A824AE /* CustomButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomButton.swift; sourceTree = "<group>"; };
 		95237B5D278B6A2100A824AE /* RepoSearchType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepoSearchType.swift; sourceTree = "<group>"; };
+		95237B5F278C8D9700A824AE /* ApiError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiError.swift; sourceTree = "<group>"; };
 		9EBCCADE9EE7FBADA827838F /* Pods-GitHubApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GitHubApp.release.xcconfig"; path = "Target Support Files/Pods-GitHubApp/Pods-GitHubApp.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -128,7 +130,7 @@
 				95237B3F27889E9900A824AE /* RepositoryDetail */,
 				95237B352787558C00A824AE /* Extensions */,
 				95237B2627873CCA00A824AE /* Models */,
-				95237B192787228300A824AE /* Services */,
+				95237B192787228300A824AE /* NetworkServices */,
 				95237B1827870FAE00A824AE /* MainScreen */,
 				95237B0427870E0800A824AE /* AppDelegate.swift */,
 				95237B0627870E0800A824AE /* SceneDelegate.swift */,
@@ -150,14 +152,15 @@
 			path = MainScreen;
 			sourceTree = "<group>";
 		};
-		95237B192787228300A824AE /* Services */ = {
+		95237B192787228300A824AE /* NetworkServices */ = {
 			isa = PBXGroup;
 			children = (
 				95237B20278730F800A824AE /* NetworkConstants.swift */,
 				95237B222787318E00A824AE /* ApiRouter.swift */,
 				95237B2427873A6100A824AE /* ApiClient.swift */,
+				95237B5F278C8D9700A824AE /* ApiError.swift */,
 			);
-			path = Services;
+			path = NetworkServices;
 			sourceTree = "<group>";
 		};
 		95237B2627873CCA00A824AE /* Models */ = {
@@ -374,6 +377,7 @@
 				95237B55278A112700A824AE /* Storyboarded.swift in Sources */,
 				95237B39278755F000A824AE /* UITableViewCell+Extension.swift in Sources */,
 				95237B232787318E00A824AE /* ApiRouter.swift in Sources */,
+				95237B60278C8D9700A824AE /* ApiError.swift in Sources */,
 				95237B4A2789146500A824AE /* RepositoryDetailViewController.swift in Sources */,
 				95237B4427889EDE00A824AE /* UserDetailViewController.swift in Sources */,
 				95237B0527870E0800A824AE /* AppDelegate.swift in Sources */,

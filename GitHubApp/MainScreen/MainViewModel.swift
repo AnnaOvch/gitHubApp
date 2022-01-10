@@ -31,6 +31,7 @@ extension MainViewModelType {
 protocol MainViewModelDelegate: AnyObject {
     func fetchedRepos()
     func fetchedAdditionalRepos()
+    func showAlert(_ message: String)
 }
 
 class MainViewModel: MainViewModelType {
@@ -51,11 +52,6 @@ class MainViewModel: MainViewModelType {
     
     func getRepos(page: Int, by searchString: String, searchType: RepoSearchType) {
         isLoadingData = true
-//        guard !searchString.isEmpty else  {
-//            repos = []
-//            delegate?.fetchedRepos()
-//            return
-//        }
         ApiClient.shared.getRepositoriesModel(page: page, searchString: searchString, searchType: searchType) { [weak self] result in
             DispatchQueue.main.async {
                 switch result {
@@ -69,7 +65,16 @@ class MainViewModel: MainViewModelType {
                     }
                     self?.page += 1
                 case .failure(let error):
-                    print(error.localizedDescription)
+                    self?.delegate?.showAlert(error.localizedDescription)
+//                    switch error {
+//                    
+//                    case .rateLimitExceed:
+//                        self?.delegate?.showAlert("Wait one minute, rate limit exceed")
+//                    case .decodingError, .internalServerError:
+//                        self?.delegate?.showAlert(error.localizedDescription)
+//                    default:
+//                        break
+//                    }
                 }
             }
         }
