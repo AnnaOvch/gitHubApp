@@ -7,12 +7,6 @@
 
 import UIKit
 import SwiftDebouncer
-//extension UIViewController {
-//    static func make() -> UIViewController {
-//        let viewController = UIViewController()
-//        viewController.
-//    }
-//}
 
 class ViewController: UIViewController, Storyboarded {
     @IBOutlet weak var tableView: UITableView!
@@ -25,7 +19,7 @@ class ViewController: UIViewController, Storyboarded {
     
     private lazy var activityIndicator: UIActivityIndicatorView = {
         let activityView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.large)
-        activityView.center = self.view.center
+        activityView.center = view.center
         view.addSubview(activityView)
         return activityView
     }()
@@ -50,9 +44,26 @@ class ViewController: UIViewController, Storyboarded {
     }
     
     @IBAction func segmentedControlDidChange(_ sender: UISegmentedControl) {
-        guard let searchText = searchBar.searchTextField.text else { return }
-        activityIndicator.startAnimating()
+        guard let searchText = searchBar.searchTextField.text, !searchText.isEmpty else {
+            viewModel.getEmptyRepos()
+            return
+        }
+        startActivityIndicator()
         viewModel.getRepos(by: searchText, searchType: RepoSearchType(rawValue: sender.selectedSegmentIndex) ?? .usual)
+    }
+    
+    private func startActivityIndicator() {
+        tableView.alpha = 0.5
+        tableView.isScrollEnabled = false
+        if activityIndicator.isAnimating == false {
+            activityIndicator.startAnimating()
+        }
+    }
+    
+    private func stopActivityIndicator() {
+        tableView.alpha = 1
+        activityIndicator.stop()
+        tableView.isScrollEnabled = true
     }
 }
 
@@ -60,12 +71,13 @@ class ViewController: UIViewController, Storyboarded {
 extension ViewController: MainViewModelDelegate {
     func fetchedRepos() {
         tableView.reloadData()
-        activityIndicator.stop()
+        stopActivityIndicator()
+       // tableView.setContentOffset(.zero, animated: true)
         viewModel.didUpdateUI()
     }
     
     func fetchedAdditionalRepos() {
-        tableView.tableFooterView = nil
+        tableView.tableFooterView = UIView()
         tableView.reloadData()
         viewModel.didUpdateUI()
     }
@@ -79,10 +91,8 @@ extension ViewController: UIScrollViewDelegate {
             guard !viewModel.isLoadingData, let searchText = searchBar.text, let reposCount =  viewModel.getReposCount(), reposCount > 0 else {
                 return
             }
-            
             tableView.tableFooterView = spinnerFooterView
             bottomSpinner.startAnimating()
-            
             viewModel.getRepos(page: viewModel.page, by: searchText, searchType: RepoSearchType(rawValue: segmentedControl.selectedSegmentIndex) ?? .usual)
         }
     }
@@ -127,7 +137,10 @@ extension ViewController: UISearchBarDelegate {
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         tableView.hideEmptyMessage()
-        if !activityIndicator.isAnimating { activityIndicator.start() }
+       // if !activityIndicator.isAnimating {
+            print("act indicator \(activityIndicator.isAnimating)")
+            startActivityIndicator()
+       // }
         debouncer.callback = { [weak self] in
             self?.getRepositories()
         }
@@ -135,10 +148,10 @@ extension ViewController: UISearchBarDelegate {
     }
     
     @objc func getRepositories() {
-        guard let searchText = searchBar.text else {
+        guard let searchText = searchBar.text, !searchText.isEmpty else {
+            viewModel.getEmptyRepos()
             return
         }
-        activityIndicator.startAnimating()
         viewModel.getRepos(by: searchText, searchType: RepoSearchType(rawValue: segmentedControl.selectedSegmentIndex) ?? .usual)
     }
 }
@@ -148,6 +161,7 @@ private extension ViewController {
     func setUpUI() {
         title = Constants.navBarTitle
         searchBar.returnKeyType = .done
+        searchBar.placeholder = "Search"
     }
     
     func setUpDelegates() {

@@ -22,7 +22,7 @@
                                 <textInputTraits key="textInputTraits"/>
                             </searchBar>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="ObO-0l-Eeu">
-                                <rect key="frame" x="0.0" y="95" width="414" height="717"/>
+                                <rect key="frame" x="0.0" y="95" width="414" height="736"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             </tableView>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="Lij-hO-RWH">
@@ -42,7 +42,7 @@
                         <color key="backgroundColor" red="0.85553246736526489" green="0.77646041468622662" blue="0.81408454621414816" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                         <constraints>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="Lij-hO-RWH" secondAttribute="bottom" id="4AP-fT-594"/>
-                            <constraint firstItem="Lij-hO-RWH" firstAttribute="top" secondItem="ObO-0l-Eeu" secondAttribute="bottom" constant="19" id="6UC-4S-TrV"/>
+                            <constraint firstItem="Lij-hO-RWH" firstAttribute="top" secondItem="ObO-0l-Eeu" secondAttribute="bottom" id="6UC-4S-TrV"/>
                             <constraint firstItem="Lij-hO-RWH" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="9la-aE-h4M"/>
                             <constraint firstItem="21I-zs-T6J" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="FRK-Kz-K6o"/>
                             <constraint firstItem="21I-zs-T6J" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="GAz-0g-Nnp"/>

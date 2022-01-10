@@ -13,8 +13,6 @@ enum ApiRouterError: Error {
 }
 
 enum ApiRouter: URLRequestConvertible {
-    
-//    case getRepos(searchString: String, searchType: RepoSearchType = .usual)
     case getRepos(page: Int, searchString: String, searchType: RepoSearchType = .usual)
     case getUserDetails(username: String)
     case getRepoDetails(username: String, repoName: String)
@@ -99,5 +97,5 @@ private extension ApiRouter {
 }
 
 fileprivate enum Constants {
-    static let countPerPage: String = "5"
+    static let countPerPage: String = "30"
 }

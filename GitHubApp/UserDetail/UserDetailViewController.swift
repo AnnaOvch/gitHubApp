@@ -15,6 +15,7 @@ class UserDetailViewController: UIViewController {
         avatarImageView.contentMode = .scaleAspectFit
         avatarImageView.translatesAutoresizingMaskIntoConstraints = false
         avatarImageView.layer.masksToBounds = true
+        avatarImageView.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
         view.addSubview(avatarImageView)
         return avatarImageView
     }()
@@ -59,18 +60,19 @@ class UserDetailViewController: UIViewController {
     
     private lazy var openDetailsButton: CustomButton = {
         let openDetailsButton = CustomButton()
-        openDetailsButton.cornerRadiusDivider = 2
-        openDetailsButton.titleText = "Surf Net"
+        openDetailsButton.cornerRadiusDivider = Constants.buttonCornerDivider
+        openDetailsButton.titleText = Constants.buttonTitle
         openDetailsButton.titleColor = .black
         openDetailsButton.borderColor = UIColor.white.cgColor
-        openDetailsButton.borderWidth = 3
-        openDetailsButton.contentSpacing = 8
+        openDetailsButton.borderWidth = Constants.buttonBorderWidth
+        openDetailsButton.contentSpacing = Constants.buttonContentSpacing
         openDetailsButton.addTarget(self, action: #selector(didTapOpenDetailsButton), for: .touchUpInside)
         return openDetailsButton
     }()
     
     private lazy var activityIndicator: UIActivityIndicatorView = {
-        let activityIndicator = UIActivityIndicatorView()
+        let activityIndicator = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.large)
+        activityIndicator.center = view.center
         activityIndicator.hidesWhenStopped = true
         view.addSubview(activityIndicator)
         return activityIndicator
@@ -110,36 +112,42 @@ private extension UserDetailViewController {
             
             detailsStackView.topAnchor.constraint(equalTo: avatarImageView.bottomAnchor, constant: Constants.detailsStackTop),
             detailsStackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: Constants.detailsStackLeading),
-            detailsStackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: Constants.detailsStackTrailing)//,
-           // detailsStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: Constants.detailsStackBottom)
+            detailsStackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: Constants.detailsStackTrailing)
         ])
     }
     
-    @objc private func didTapOpenDetailsButton() {
+    @objc func didTapOpenDetailsButton() {
         viewModel.didTapOpenDetailsButton()
     }
 }
 
 extension UserDetailViewController: UserDetailViewModelDelegate {
     func showActivityIndicator(_ isLoading: Bool) {
+        detailsStackView.isHidden = isLoading
+        avatarImageView.isHidden = isLoading
         if isLoading {
             activityIndicator.startAnimating()
         } else {
             activityIndicator.stopAnimating()
+            UIView.animate(withDuration: 3, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0, options: [.transitionFlipFromLeft], animations: {
+                self.avatarImageView.transform = .identity
+            })
         }
     }
     
     func loadedUserDetails(_ model: RepoOwner) {
-        showActivityIndicator(false)
         avatarImageView.image = model.avatarImage
-        locationLabel.text = "Location: " + (model.location ?? "Unknown")
-        idLabel.text = "ID: " + String(model.id)
-        loginLabel.text = "Login: " + model.login
-        publicRepoLabel.text = "Number of public repos: " + String(model.publicReposCount ?? 0)
+        locationLabel.text = Constants.location + (model.location ?? Constants.unknown)
+        idLabel.text = Constants.id + String(model.id)
+        loginLabel.text = Constants.login + model.login
+        publicRepoLabel.text = Constants.numberOfRepo + String(model.publicReposCount ?? 0)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            self.showActivityIndicator(false)
+        }
     }
     
     func showError(_ message: String) {
-        showActivityIndicator(false)
+        activityIndicator.stopAnimating()
         showDefaultAlert(withTitle: Constants.errorTitle, message: message)
     }
 }
@@ -147,6 +155,16 @@ extension UserDetailViewController: UserDetailViewModelDelegate {
 fileprivate enum Constants {
     static let errorTitle: String = "Error!"
     static let title: String = "User"
+    static let buttonTitle: String = "Surf Net"
+    static let unknown: String = "Unknown"
+    static let location: String = "Location: "
+    static let id: String = "ID: "
+    static let login: String = "Login: "
+    static let numberOfRepo: String = "Number of public repos: "
+    
+    static let buttonCornerDivider: CGFloat = 2
+    static let buttonBorderWidth: CGFloat = 3
+    static let buttonContentSpacing: CGFloat = 8
     
     static let cornerRadiusDivider: CGFloat = 5
     

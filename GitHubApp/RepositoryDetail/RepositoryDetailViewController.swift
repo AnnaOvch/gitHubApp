@@ -7,14 +7,6 @@
 
 import UIKit
 
-//extension RepositoryDetailViewController {
-//    static func make(username: String, reponame: String) -> RepositoryDetailViewController {
-//        let repoDetailViewController = RepositoryDetailViewController()
-//        repoDetailViewController.viewModel = RepositoryDetailViewModel(username: username,reponame: reponame, networkService: ApiClient.shared)
-//        return repoDetailViewController
-//    }
-//}
-
 class RepositoryDetailViewController: UIViewController {
     var viewModel: RepositoryDetailViewModelType!
     
@@ -56,9 +48,9 @@ class RepositoryDetailViewController: UIViewController {
         openDetailsButton.titleText = Constants.detailsButtonTitle
         openDetailsButton.titleColor = .blue
         openDetailsButton.borderColor = UIColor.purple.cgColor
-        openDetailsButton.borderWidth = 1
-        openDetailsButton.contentSpacing = 8
-        openDetailsButton.topBottomSpacing = 8
+        openDetailsButton.borderWidth =  Constants.buttonBorderWidth
+        openDetailsButton.contentSpacing = Constants.buttonContentSpacing
+        openDetailsButton.topBottomSpacing = Constants.buttontopBottomSpacing
         openDetailsButton.addTarget(self, action: #selector(didTapOpenDetailsButton), for: .touchUpInside)
         return openDetailsButton
     }()
@@ -68,9 +60,9 @@ class RepositoryDetailViewController: UIViewController {
         openDetailsButton.titleText = Constants.userDetailsButtonTitle
         openDetailsButton.titleColor = .blue
         openDetailsButton.borderColor = UIColor.purple.cgColor
-        openDetailsButton.borderWidth = 1
-        openDetailsButton.contentSpacing = 8
-        openDetailsButton.topBottomSpacing = 8
+        openDetailsButton.borderWidth = Constants.buttonBorderWidth
+        openDetailsButton.contentSpacing = Constants.buttonContentSpacing
+        openDetailsButton.topBottomSpacing = Constants.buttontopBottomSpacing
         openDetailsButton.addTarget(self, action: #selector(didTapOpenUserDetailsButton), for: .touchUpInside)
         return openDetailsButton
     }()
@@ -88,8 +80,9 @@ class RepositoryDetailViewController: UIViewController {
     }()
     
     private lazy var activityIndicator: UIActivityIndicatorView = {
-        let activityIndicator = UIActivityIndicatorView()
+        let activityIndicator = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.large)
         activityIndicator.hidesWhenStopped = true
+        activityIndicator.center = view.center
         view.addSubview(activityIndicator)
         return activityIndicator
     }()
@@ -135,6 +128,7 @@ private extension RepositoryDetailViewController {
 //MARK: - RepositoryDetailViewModelDelegate
 extension RepositoryDetailViewController: RepositoryDetailViewModelDelegate {
     func showActivityIndicator(_ isLoading: Bool) {
+        detailsStackView.isHidden = isLoading
         if isLoading {
             activityIndicator.startAnimating()
         } else {
@@ -143,10 +137,12 @@ extension RepositoryDetailViewController: RepositoryDetailViewModelDelegate {
     }
     
     func loadedRepoDetails(_ model: RepoModel) {
-        showActivityIndicator(false)
         programmingLangageLabel.text =  Constants.languageTitle + (model.language ?? Constants.unknown)
         dateOfCreationLabel.text = Constants.createdAtTitle + (model.creationDate ?? Constants.unknown)
         dateOfModificationLabel.text = Constants.modifiedAtTitle + (model.modificationDate ?? Constants.unknown)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            self.showActivityIndicator(false)
+        }
     }
     
     func showError(_ message: String) {
@@ -173,5 +169,9 @@ fileprivate enum Constants {
     static let buttonsStackSpacing: CGFloat = 20
     
     static let buttonSpacing: CGFloat = 30
+    
+    static let buttonBorderWidth: CGFloat = 1
+    static let buttonContentSpacing: CGFloat = 8
+    static let buttontopBottomSpacing: CGFloat = 8
 }
 

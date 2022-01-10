@@ -16,7 +16,6 @@ enum ApiError: Error {
 
 protocol ApiClientProtocol {
     typealias RepoModelsHandler = (Result<[RepoModel], Error>) -> Void
-   // func getRepositoriesModel(searchString: String, searchType: RepoSearchType, completion: @escaping RepoModelsHandler)
     func getRepositoriesModel(page: Int, searchString: String, searchType: RepoSearchType, completion: @escaping RepoModelsHandler)
 }
 
@@ -114,15 +113,11 @@ extension ApiClient: ApiClientProtocol {
     private func requestRepositoriesModel(urlRequest: URLRequest, completion: @escaping RepoModelsHandler) {
         dataTask?.cancel()
         dataTask = session.dataTask(with: urlRequest) { data, response, error in
-            if let httpResponse = response as? HTTPURLResponse {
-                print(httpResponse.statusCode)
-            }
             if error != nil {
                 completion(.failure(ApiError.internalServerError))
-            } else {
+            } else if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
                 do {
                     let repositoryModel = try JSONDecoder().decode(RepositoriesModel.self, from: data!)
-                    print(repositoryModel.repos.count)
                     let resultItems = repositoryModel.repos.map({ item -> RepoModel in
                         guard let url = URL(string: item.owner.avatarURL) else { return item }
                         var newItem = item
@@ -135,6 +130,11 @@ extension ApiClient: ApiClientProtocol {
                 } catch {
                     completion(.failure(ApiError.decodingError))
                 }
+            } else if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 403 {
+                print(urlRequest.urlRequest)
+                print(data)
+                print(response)
+                print(error)
             }
         }
         dataTask?.resume()

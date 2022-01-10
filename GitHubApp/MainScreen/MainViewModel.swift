@@ -10,7 +10,7 @@ import UIKit
 protocol MainViewModelType {
     var delegate: MainViewModelDelegate? { get set }
     var isLoadingData: Bool { get }
-    var page: Int { get }
+    var page: Int { get set }
     func getRepos() -> [RepoModel]?
     func getRepos(page: Int, by searchString: String, searchType: RepoSearchType)
     func getRepo(by indexPath: IndexPath) -> RepoModel?
@@ -18,10 +18,12 @@ protocol MainViewModelType {
     func didSelectRepo(at indexPath: IndexPath)
     func didSelectUser(at indexPath: IndexPath)
     func didUpdateUI()
+    func getEmptyRepos()
 }
 
 extension MainViewModelType {
-    func getRepos(by searchString: String, searchType: RepoSearchType) {
+    mutating func getRepos(by searchString: String, searchType: RepoSearchType) {
+        page = 1
         return getRepos(page: 1, by: searchString, searchType: searchType)
     }
 }
@@ -33,16 +35,11 @@ protocol MainViewModelDelegate: AnyObject {
 
 class MainViewModel: MainViewModelType {
     weak var delegate: MainViewModelDelegate?
-    
     weak var coordinator: MainCoordinator?
     private let networkService: ApiClientProtocol!
-    
     private var repos: [RepoModel]?
-    
-    //pagination
     private (set) var isLoadingData: Bool  = false
-    private (set) var page: Int = 1
-    
+    var page: Int = 1
     
     init(networkService: ApiClientProtocol) {
         self.networkService = networkService
@@ -54,11 +51,11 @@ class MainViewModel: MainViewModelType {
     
     func getRepos(page: Int, by searchString: String, searchType: RepoSearchType) {
         isLoadingData = true
-        guard !searchString.isEmpty else  {
-            repos = []
-            delegate?.fetchedRepos()
-            return
-        }
+//        guard !searchString.isEmpty else  {
+//            repos = []
+//            delegate?.fetchedRepos()
+//            return
+//        }
         ApiClient.shared.getRepositoriesModel(page: page, searchString: searchString, searchType: searchType) { [weak self] result in
             DispatchQueue.main.async {
                 switch result {
@@ -76,6 +73,11 @@ class MainViewModel: MainViewModelType {
                 }
             }
         }
+    }
+    
+    func getEmptyRepos() {
+        repos = []
+        delegate?.fetchedRepos()
     }
     
     func getRepo(by indexPath: IndexPath) -> RepoModel? {
