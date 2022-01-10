@@ -55,7 +55,7 @@ class ViewController: UIViewController, Storyboarded {
     private func startActivityIndicator() {
         tableView.alpha = 0.5
         tableView.isScrollEnabled = false
-        if activityIndicator.isAnimating == false {
+        if !activityIndicator.isAnimating  {
             activityIndicator.startAnimating()
         }
     }
@@ -72,7 +72,13 @@ extension ViewController: MainViewModelDelegate {
     func fetchedRepos() {
         tableView.reloadData()
         stopActivityIndicator()
-       // tableView.setContentOffset(.zero, animated: true)
+        if tableView.numberOfRows(inSection: 0) > 0 {
+            let topRow = IndexPath(row: 0,
+                                   section: 0)
+            tableView.scrollToRow(at: topRow,
+                                  at: .top,
+                                  animated: true)
+        }
         viewModel.didUpdateUI()
     }
     
@@ -137,10 +143,7 @@ extension ViewController: UISearchBarDelegate {
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         tableView.hideEmptyMessage()
-       // if !activityIndicator.isAnimating {
-            print("act indicator \(activityIndicator.isAnimating)")
-            startActivityIndicator()
-       // }
+        startActivityIndicator()
         debouncer.callback = { [weak self] in
             self?.getRepositories()
         }

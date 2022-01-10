@@ -117,6 +117,7 @@ extension ApiClient: ApiClientProtocol {
                 completion(.failure(ApiError.internalServerError))
             } else if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
                 do {
+                    print(response)
                     let repositoryModel = try JSONDecoder().decode(RepositoriesModel.self, from: data!)
                     let resultItems = repositoryModel.repos.map({ item -> RepoModel in
                         guard let url = URL(string: item.owner.avatarURL) else { return item }
@@ -130,11 +131,9 @@ extension ApiClient: ApiClientProtocol {
                 } catch {
                     completion(.failure(ApiError.decodingError))
                 }
-            } else if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 403 {
-                print(urlRequest.urlRequest)
-                print(data)
+            } else if let httpResponse = response as? HTTPURLResponse {
+                print("http reponse \(httpResponse)")
                 print(response)
-                print(error)
             }
         }
         dataTask?.resume()
