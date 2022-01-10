@@ -37,12 +37,12 @@ protocol MainViewModelDelegate: AnyObject {
 class MainViewModel: MainViewModelType {
     weak var delegate: MainViewModelDelegate?
     weak var coordinator: MainCoordinator?
-    private let networkService: ApiClientProtocol!
+    private let networkService: ApiSearchRepoProtocol!
     private var repos: [RepoModel]?
     private (set) var isLoadingData: Bool  = false
     var page: Int = 1
     
-    init(networkService: ApiClientProtocol) {
+    init(networkService: ApiSearchRepoProtocol) {
         self.networkService = networkService
     }
     
@@ -66,15 +66,6 @@ class MainViewModel: MainViewModelType {
                     self?.page += 1
                 case .failure(let error):
                     self?.delegate?.showAlert(error.localizedDescription)
-//                    switch error {
-//                    
-//                    case .rateLimitExceed:
-//                        self?.delegate?.showAlert("Wait one minute, rate limit exceed")
-//                    case .decodingError, .internalServerError:
-//                        self?.delegate?.showAlert(error.localizedDescription)
-//                    default:
-//                        break
-//                    }
                 }
             }
         }

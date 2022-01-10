@@ -8,8 +8,8 @@
 import Foundation
 import UIKit
 
-protocol ApiClientProtocol {
-    typealias RepoModelsHandler = (Result<[RepoModel], ApiError>) -> Void
+protocol ApiSearchRepoProtocol {
+    typealias RepoModelsHandler = (Result<[RepoModel], Error>) -> Void
     func getRepositoriesModel(page: Int, searchString: String, searchType: RepoSearchType, completion: @escaping RepoModelsHandler)
 }
 
@@ -30,7 +30,7 @@ class ApiClient {
     let configuration = URLSessionConfiguration.default
     lazy var session = URLSession(configuration: configuration)
     var dataTask: URLSessionDataTask?
-    var searchRateLimit: Int = 10
+    var searchRateLimit: Int = NetworkConstants.rateLimit
 }
 
 //MARK: - ApiRepoDetailProtocol
@@ -45,18 +45,17 @@ extension ApiClient: ApiRepoDetailProtocol {
     private func requestRepoDetails(urlRequest: URLRequest, completion: @escaping RepoDetailHandler) {
         dataTask?.cancel()
         dataTask = session.dataTask(with: urlRequest) { data, response, error in
-            if let httpResponse = response as? HTTPURLResponse {
-                print(httpResponse.statusCode)
-            }
             if error != nil || data == nil {
-                completion(.failure(ApiError.internalServerError))
-            } else {
+                completion(.failure(RepoDetailApiError.internalServerError))
+            } else if let data = data {
                 do {
-                    let repoModel = try JSONDecoder().decode(RepoModel.self, from: data!)
+                    let repoModel = try JSONDecoder().decode(RepoModel.self, from: data)
                     completion(.success(repoModel))
                 } catch {
-                    completion(.failure(ApiError.decodingError))
+                    completion(.failure(RepoDetailApiError.decodingError))
                 }
+            } else {
+                completion(.failure(RepoDetailApiError.unknownError))
             }
         }
         dataTask?.resume()
@@ -75,21 +74,20 @@ extension ApiClient: ApiUserDetailProtocol {
     private func requestUserDetails(urlRequest: URLRequest, completion: @escaping UserDetailHandler) {
         dataTask?.cancel()
         dataTask = session.dataTask(with: urlRequest) { data, response, error in
-            if let httpResponse = response as? HTTPURLResponse {
-                print(httpResponse.statusCode)
-            }
             if error != nil || data == nil {
-                completion(.failure(ApiError.internalServerError))
-            } else {
+                completion(.failure(UserDetailApiError.internalServerError))
+            } else if let data = data {
                 do {
-                    var userModel = try JSONDecoder().decode(RepoOwner.self, from: data!)
+                    var userModel = try JSONDecoder().decode(RepoOwner.self, from: data)
                     if let url = URL(string: userModel.avatarURL), let data = try? Data(contentsOf: url) {
                         userModel.avatarImage = UIImage(data: data)
                     }
                     completion(.success(userModel))
                 } catch {
-                    completion(.failure(ApiError.decodingError))
+                    completion(.failure(UserDetailApiError.decodingError))
                 }
+            } else {
+                completion(.failure(UserDetailApiError.unknownError))
             }
         }
         dataTask?.resume()
@@ -97,7 +95,7 @@ extension ApiClient: ApiUserDetailProtocol {
 }
 
 //MARK: - ApiClientProtocol
-extension ApiClient: ApiClientProtocol {
+extension ApiClient: ApiSearchRepoProtocol {
     func getRepositoriesModel(page: Int, searchString: String, searchType: RepoSearchType, completion: @escaping RepoModelsHandler) {
         guard let urlRequest = try? ApiRouter.getRepos(page: page, searchString: searchString, searchType: searchType).asURLRequest() else {
             return
@@ -110,31 +108,39 @@ extension ApiClient: ApiClientProtocol {
         dataTask = session.dataTask(with: urlRequest) { [weak self] data, response, error in
             let httpResponse = response as? HTTPURLResponse
             if error != nil {
-                completion(.failure(ApiError.internalServerError))
-            } else if httpResponse?.statusCode == 200 {
+                completion(.failure(SearchApiError.internalServerError))
+            } else if httpResponse?.statusCode == StatusCode.success.rawValue, let data = data {
+                self?.updateRateLimit(from: httpResponse)
                 do {
-                    if let rateLimitResponse = httpResponse?.allHeaderFields["x-ratelimit-remaining"] as? String, let rateLimit = Int(rateLimitResponse) {
-                        self?.searchRateLimit = rateLimit
-                    }
-                    let repositoryModel = try JSONDecoder().decode(RepositoriesModel.self, from: data!)
-                    let resultItems = repositoryModel.repos.map({ item -> RepoModel in
-                        guard let url = URL(string: item.owner.avatarURL) else { return item }
-                        var newItem = item
-                        if let data = try? Data(contentsOf: url) {
-                            newItem.avatarImage = UIImage(data: data)
-                        }
-                        return newItem
-                    })
-                    completion(.success(resultItems))
+                    let repositoryModel = try JSONDecoder().decode(RepositoriesModel.self, from: data)
+                    let resultItems = self?.retrieveImages(from: repositoryModel)
+                    completion(.success(resultItems ?? []))
                 } catch {
-                    completion(.failure(ApiError.decodingError))
+                    completion(.failure(SearchApiError.decodingError))
                 }
-            } else if self?.searchRateLimit == 0 && httpResponse?.statusCode == 403 {
-                completion(.failure(ApiError.rateLimitExceed))
+            } else if self?.searchRateLimit == 0, httpResponse?.statusCode == StatusCode.invalidRateLimit.rawValue {
+                completion(.failure(SearchApiError.rateLimitExceed))
             } else {
-                completion(.failure(ApiError.unknownError))
+                completion(.failure(SearchApiError.unknownError))
             }
         }
         dataTask?.resume()
+    }
+    
+    private func updateRateLimit(from response: HTTPURLResponse?) {
+        if let rateLimitResponse = response?.allHeaderFields["x-ratelimit-remaining"] as? String, let rateLimit = Int(rateLimitResponse) {
+            searchRateLimit = rateLimit
+        }
+    }
+    
+    private func retrieveImages(from repoModel: RepositoriesModel) -> [RepoModel] {
+        return repoModel.repos.map {item -> RepoModel in
+            guard let url = URL(string: item.owner.avatarURL) else { return item }
+            var newItem = item
+            if let data = try? Data(contentsOf: url) {
+                newItem.avatarImage = UIImage(data: data)
+            }
+            return newItem
+        }
     }
 }

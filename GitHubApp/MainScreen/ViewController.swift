@@ -89,8 +89,10 @@ extension ViewController: MainViewModelDelegate {
     }
     
     func showAlert(_ message: String) {
+        tableView.tableFooterView = UIView()
         stopActivityIndicator()
-        showDefaultAlert(withTitle: "Error", message: message)
+        showDefaultAlert(withTitle: Constants.errorTitle, message: message)
+        viewModel.didUpdateUI()
     }
 }
 
@@ -197,6 +199,7 @@ private extension ViewController {
 fileprivate enum Constants {
     static let emptyMessage: String = "Please search repos"
     static let navBarTitle: String = "GitHub API"
+    static let errorTitle: String = "Error"
     static let estimatedRowHeight: CGFloat = 44.0
     static let spinnerHeight: CGFloat = 100
     static let debounceDelay: Double = 3
